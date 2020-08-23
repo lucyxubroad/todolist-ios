@@ -8,6 +8,20 @@
 
 import UIKit
 
+class ToDo {
+    var description: String
+    var completed: Bool
+    var starred: Bool
+    var subTodos: [ToDo]
+
+    init(description: String, completed: Bool, starred: Bool) {
+        self.description = description
+        self.completed = completed
+        self.starred = starred
+        self.subTodos = []
+    }
+}
+
 class ViewController: UIViewController {
 
     private let todoTableView = UITableView(frame: .zero, style: .plain)
@@ -15,16 +29,18 @@ class ViewController: UIViewController {
     private let todoLabel = UILabel()
     private let submitButton = UIButton()
 
-    private var todoArray: [String] = []
+//    private var todoArray: [String] = []
+    private var todoArray: [ToDo] = []
+    private let todoCellReuseIdentifier = "TodoCellReuseIdentifier"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        title = "My To Do List"
+        title = "Tasks"
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
 
-        todoLabel.text = "Use me to keep up with your all your todos!"
+        todoLabel.text = "Use me to keep up with your all your daily tasks!"
         todoLabel.translatesAutoresizingMaskIntoConstraints = false
         todoLabel.font = .systemFont(ofSize: 15)
         todoLabel.textColor = .black
@@ -33,11 +49,11 @@ class ViewController: UIViewController {
         let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 30))
         todoTextField.leftView = leftView
         todoTextField.leftViewMode = .always
-        todoTextField.placeholder = "Enter To Do"
+        todoTextField.placeholder = "Enter task"
         todoTextField.translatesAutoresizingMaskIntoConstraints = false
         todoTextField.backgroundColor = .white
         todoTextField.layer.borderWidth = 1
-        todoTextField.layer.borderColor = UIColor.black.cgColor
+        todoTextField.layer.borderColor = UIColor.darkGray.cgColor
         todoTextField.layer.cornerRadius = 10
         todoTextField.font = .systemFont(ofSize: 15)
         view.addSubview(todoTextField)
@@ -54,6 +70,7 @@ class ViewController: UIViewController {
         todoTableView.delegate = self
         todoTableView.dataSource = self
         todoTableView.translatesAutoresizingMaskIntoConstraints = false
+        todoTableView.register(ToDoTableViewCell.self, forCellReuseIdentifier: todoCellReuseIdentifier)
         view.addSubview(todoTableView)
         setupConstraints()
 
@@ -94,7 +111,9 @@ class ViewController: UIViewController {
     @objc func addToDoItem() {
         let todo = todoTextField.text
         if let todo = todo {
-            todoArray.append(todo)
+//            todoArray.append(todo)
+            let newTodo = ToDo(description: todo, completed: false, starred: false)
+            todoArray.append(newTodo)
             todoTextField.text = ""
             todoTableView.reloadData()
         }
@@ -108,12 +127,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = todoArray[indexPath.row]
+//        let cell = UITableViewCell()
+//        cell.textLabel?.text = todoArray[indexPath.row]
+//        cell.selectionStyle = .none
+//        return cell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: todoCellReuseIdentifier, for: indexPath) as? ToDoTableViewCell else { return UITableViewCell() }
+        cell.configure(with: todoArray[indexPath.row], index: indexPath.row, delegate: self)
         return cell
     }
 
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let todoItemViewController = ToDoItemViewController(todoItem: todoArray[indexPath.row].description)
         let todoItemViewController = ToDoItemViewController(todoItem: todoArray[indexPath.row])
         navigationController?.pushViewController(todoItemViewController, animated: true)
     }
@@ -124,4 +152,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
+}
+
+extension ViewController: ToDoDelegate {
+    func setCompleted(index: Int) {
+        todoArray[index].completed = !todoArray[index].completed
+        todoTableView.reloadData()
+    }
+
+    func setStarred(index: Int) {
+        todoArray[index].starred = !todoArray[index].starred
+        todoTableView.reloadData()
+    }
+
 }
