@@ -8,20 +8,6 @@
 
 import UIKit
 
-class ToDo {
-    var description: String
-    var completed: Bool
-    var starred: Bool
-    var subTodos: [ToDo]
-
-    init(description: String, completed: Bool, starred: Bool) {
-        self.description = description
-        self.completed = completed
-        self.starred = starred
-        self.subTodos = []
-    }
-}
-
 class ViewController: UIViewController {
 
     private let todoTableView = UITableView(frame: .zero, style: .plain)
@@ -29,13 +15,12 @@ class ViewController: UIViewController {
     private let todoLabel = UILabel()
     private let submitButton = UIButton()
 
-//    private var todoArray: [String] = []
     private var todoArray: [ToDo] = []
     private let todoCellReuseIdentifier = "TodoCellReuseIdentifier"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
         title = "Tasks"
         view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -88,13 +73,13 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             todoTextField.topAnchor.constraint(equalTo: todoLabel.bottomAnchor, constant: 20),
             todoTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            todoTextField.widthAnchor.constraint(equalToConstant: 300),
+            todoTextField.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -10),
             todoTextField.heightAnchor.constraint(equalToConstant: 30)
         ])
 
         NSLayoutConstraint.activate([
             submitButton.topAnchor.constraint(equalTo: todoTextField.topAnchor),
-            submitButton.leadingAnchor.constraint(equalTo: todoTextField.trailingAnchor, constant: 10),
+            submitButton.widthAnchor.constraint(equalToConstant: 100),
             submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             submitButton.heightAnchor.constraint(equalTo: todoTextField.heightAnchor)
         ])
@@ -111,7 +96,6 @@ class ViewController: UIViewController {
     @objc func addToDoItem() {
         let todo = todoTextField.text
         if let todo = todo {
-//            todoArray.append(todo)
             let newTodo = ToDo(description: todo, completed: false, starred: false)
             todoArray.append(newTodo)
             todoTextField.text = ""
@@ -127,10 +111,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = UITableViewCell()
-//        cell.textLabel?.text = todoArray[indexPath.row]
-//        cell.selectionStyle = .none
-//        return cell
         guard let cell = tableView.dequeueReusableCell(withIdentifier: todoCellReuseIdentifier, for: indexPath) as? ToDoTableViewCell else { return UITableViewCell() }
         cell.configure(with: todoArray[indexPath.row], index: indexPath.row, delegate: self)
         return cell
@@ -141,7 +121,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let todoItemViewController = ToDoItemViewController(todoItem: todoArray[indexPath.row].description)
         let todoItemViewController = ToDoItemViewController(todoItem: todoArray[indexPath.row])
         navigationController?.pushViewController(todoItemViewController, animated: true)
     }

@@ -70,13 +70,6 @@ class ToDoTableViewCell: UITableViewCell {
         delegate?.setCompleted(index: index)
     }
 
-//    func configure(with todo: String) {
-//        todoLabel.text = todo
-//        setCompletedButton.image = UIImage(named: "success-outline")
-//        setStarredButton.image = UIImage(named: "star-outline")
-//    }
-
-
     func configure(with todo: ToDo, index: Int, delegate: ToDoDelegate) {
         self.index = index
         self.delegate = delegate

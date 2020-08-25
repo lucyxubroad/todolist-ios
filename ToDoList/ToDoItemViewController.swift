@@ -92,13 +92,13 @@ class ToDoItemViewController: UIViewController {
         NSLayoutConstraint.activate([
             todoTextField.topAnchor.constraint(equalTo: bannerView.bottomAnchor, constant: 20),
             todoTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            todoTextField.widthAnchor.constraint(equalToConstant: 300),
+            todoTextField.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -10),
             todoTextField.heightAnchor.constraint(equalToConstant: 30)
         ])
 
         NSLayoutConstraint.activate([
             submitButton.topAnchor.constraint(equalTo: todoTextField.topAnchor),
-            submitButton.leadingAnchor.constraint(equalTo: todoTextField.trailingAnchor, constant: 10),
+            submitButton.widthAnchor.constraint(equalToConstant: 100),
             submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             submitButton.heightAnchor.constraint(equalTo: todoTextField.heightAnchor)
         ])
